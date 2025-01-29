@@ -1,0 +1,63 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:manager/authentication/loginscreen.dart';
+import 'package:manager/mainscreens/homepage.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+          apiKey: "AIzaSyBxHFaPOaXAdBHtrfdB-NQjrDXH8ZwhiOE",
+          authDomain: "tuzo-cdcbd.firebaseapp.com",
+          projectId: "tuzo-cdcbd",
+          storageBucket: "tuzo-cdcbd.firebasestorage.app",
+          messagingSenderId: "37507938700",
+          appId: "1:37507938700:web:6898c8c91ede74fdf83ea9",
+          measurementId: "G-2J8S81Y266"),
+    );
+  } else {
+    await Firebase.initializeApp();
+  }
+
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: AuthGate(), // Use an AuthGate widget for checking authentication
+    );
+  }
+}
+
+class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        // If the snapshot has data, the user is signed in
+        if (snapshot.connectionState == ConnectionState.active) {
+          if (snapshot.hasData) {
+            return HomePage(); // If user is signed in, redirect to HomePage
+          } else {
+            return LoginScreen(); // If user is not signed in, show LoginScreen
+          }
+        }
+
+        // While waiting for the authentication state, show a loading indicator
+        return Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+}
