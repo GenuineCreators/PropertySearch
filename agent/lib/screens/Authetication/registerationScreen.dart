@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:agent/screens/mainscreens/mainScreen.dart';
+import 'package:agent/screens/mainscreen/mains_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
