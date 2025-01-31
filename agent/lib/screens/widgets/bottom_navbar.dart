@@ -18,7 +18,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   List<Widget> _pages() {
     return [
       MainScreen(),
-      HomePage(),
+      NewHouses(),
       // SearchScreen(),
       ActivityScreen(),
       ProfileScreen(),
