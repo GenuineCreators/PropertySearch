@@ -49,7 +49,8 @@ class _MainScreenState extends State<MainScreen> {
               final bathrooms = house['bathrooms'] as int;
               final amenities = house['amenities'] as Map<String, dynamic>;
               final hasSwimmingPool = house['hasSwimmingPool'] as bool;
-              final type = house['type'] as String; // Get the type
+              final type = house['type'] as String;
+              final location = house['location'] as String; // Get the type
 
               // Convert amenities to Map<String, bool>
               final amenitiesMap = amenities.map<String, bool>(
@@ -124,15 +125,24 @@ class _MainScreenState extends State<MainScreen> {
 
                       // Display the price
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.only(
+                            top: 8, bottom: 8, left: 18, right: 18),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '\$${price.toStringAsFixed(2)}',
+                              '$location',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
+                            ),
+                            Text(
+                              '\$${price.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue),
                             ),
                           ],
                         ),
