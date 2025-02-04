@@ -39,7 +39,7 @@ class ProfileScreen extends StatelessWidget {
 
           final userData = snapshot.data!;
           final profileImage = userData['profileImage'];
-          final userName = userData['userName'] ?? 'Unknown User';
+          final userName = userData['username'] ?? 'Unknown User';
           final rating = userData['rating'] ?? 'No rating';
 
           return SingleChildScrollView(
