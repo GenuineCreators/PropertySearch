@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "37507938700",
+    "project_id": "tuzo-cdcbd",
+    "storage_bucket": "tuzo-cdcbd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37507938700:android:3ab3bc61297ae19bf83ea9",
+        "android_client_info": {
+          "package_name": "com.example.agent"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDan5Ov0xtInJWBME0EhoB0jdDONWDPLIc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37507938700:android:552b07cf44d994b9f83ea9",
+        "android_client_info": {
+          "package_name": "com.example.client"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDan5Ov0xtInJWBME0EhoB0jdDONWDPLIc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
