@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Add this import
+import 'package:firebase_auth/firebase_auth.dart';
 
 class NewHouses extends StatefulWidget {
   const NewHouses({super.key});
@@ -33,6 +33,11 @@ class _NewHousesState extends State<NewHouses> {
     'Police Station': false,
   };
   bool _hasSwimmingPool = false;
+  bool _hasGym = false;
+  bool _hasParking = false;
+  bool _hasBalcony = false;
+  bool _hasSecurity = false;
+  bool _isPetFriendly = false;
   bool _isUploading = false;
 
   // Firebase Auth instance
@@ -175,14 +180,67 @@ class _NewHousesState extends State<NewHouses> {
                     'Extra',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  CheckboxListTile(
-                    title: Text('Swimming Pool'),
-                    value: _hasSwimmingPool,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _hasSwimmingPool = value!;
-                      });
-                    },
+                  // Arrange checkboxes in rows of 2
+                  GridView.count(
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    children: [
+                      CheckboxListTile(
+                        title: Text('Swimming Pool'),
+                        value: _hasSwimmingPool,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _hasSwimmingPool = value!;
+                          });
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: Text('Gym'),
+                        value: _hasGym,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _hasGym = value!;
+                          });
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: Text('Parking'),
+                        value: _hasParking,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _hasParking = value!;
+                          });
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: Text('Balcony'),
+                        value: _hasBalcony,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _hasBalcony = value!;
+                          });
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: Text('Security'),
+                        value: _hasSecurity,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _hasSecurity = value!;
+                          });
+                        },
+                      ),
+                      CheckboxListTile(
+                        title: Text('Pet Friendly'),
+                        value: _isPetFriendly,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isPetFriendly = value!;
+                          });
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -307,6 +365,11 @@ class _NewHousesState extends State<NewHouses> {
         'description': _descriptionController.text,
         'amenities': _amenities,
         'hasSwimmingPool': _hasSwimmingPool,
+        'hasGym': _hasGym,
+        'hasParking': _hasParking,
+        'hasBalcony': _hasBalcony,
+        'hasSecurity': _hasSecurity,
+        'isPetFriendly': _isPetFriendly,
         'imageUrls': imageUrls,
         'createdAt': DateTime.now(),
       };
@@ -334,6 +397,11 @@ class _NewHousesState extends State<NewHouses> {
         _images.clear();
         _amenities.forEach((key, value) => _amenities[key] = false);
         _hasSwimmingPool = false;
+        _hasGym = false;
+        _hasParking = false;
+        _hasBalcony = false;
+        _hasSecurity = false;
+        _isPetFriendly = false;
       });
     } catch (e) {
       // Show error message
@@ -347,6 +415,18 @@ class _NewHousesState extends State<NewHouses> {
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 // // ignore_for_file: unnecessary_null_comparison
 
 // import 'dart:io';
@@ -355,6 +435,7 @@ class _NewHousesState extends State<NewHouses> {
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_storage/firebase_storage.dart';
 // import 'package:uuid/uuid.dart';
+// import 'package:firebase_auth/firebase_auth.dart'; // Add this import
 
 // class NewHouses extends StatefulWidget {
 //   const NewHouses({super.key});
@@ -382,6 +463,9 @@ class _NewHousesState extends State<NewHouses> {
 //   };
 //   bool _hasSwimmingPool = false;
 //   bool _isUploading = false;
+
+//   // Firebase Auth instance
+//   final FirebaseAuth _auth = FirebaseAuth.instance;
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -617,6 +701,15 @@ class _NewHousesState extends State<NewHouses> {
 //     });
 
 //     try {
+//       // Get the current user
+//       final User? user = _auth.currentUser;
+//       if (user == null) {
+//         ScaffoldMessenger.of(context).showSnackBar(
+//           SnackBar(content: Text('User not logged in')),
+//         );
+//         return;
+//       }
+
 //       // Generate a unique houseID
 //       final houseID = Uuid().v4();
 
@@ -634,7 +727,7 @@ class _NewHousesState extends State<NewHouses> {
 //       // Prepare data for Firestore
 //       final houseData = {
 //         'houseID': houseID,
-//         'agentID': 'userAgentID', // Replace with actual agentID
+//         'agentID': user.uid, // Use the current user's UID
 //         'location': _locationController.text,
 //         'type': _selectedType,
 //         'bedrooms': int.parse(_bedroomsController.text),
