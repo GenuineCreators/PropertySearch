@@ -62,7 +62,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
 
             // Scrollable Small Containers
-            Container(
+            SizedBox(
               height: 80,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
@@ -300,7 +300,7 @@ class _MainScreenState extends State<MainScreen> {
                               Padding(
                                 padding: const EdgeInsets.only(
                                     bottom: 8, left: 18, right: 18),
-                                child: Container(
+                                child: SizedBox(
                                   width: double.infinity,
                                   child: Text(
                                     searchLocation,
@@ -315,8 +315,11 @@ class _MainScreenState extends State<MainScreen> {
 
                               // Display bedrooms and bathrooms
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 18.0),
+                                padding: const EdgeInsets.only(
+                                  left: 18.0,
+                                  right: 18.0,
+                                  bottom: 18,
+                                ),
                                 child: Row(
                                   children: [
                                     Icon(Icons.bed, size: 20),
