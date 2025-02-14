@@ -23,8 +23,14 @@ class _ConfirmPageState extends State<ConfirmPage> {
   @override
   void initState() {
     super.initState();
-    _houseData = _fetchHouseData();
-    _fetchServiceFee(); // Fetch the service fee when the page loads
+    _houseData = _fetchHouseData().then((data) {
+      // Fetch service fee after house data is fetched
+      _fetchServiceFee().then((_) {
+        // Calculate total fee after both house data and service fee are fetched
+        _calculateTotalFee(data);
+      });
+      return data;
+    });
   }
 
   Future<Map<String, dynamic>> _fetchHouseData() async {
@@ -43,13 +49,11 @@ class _ConfirmPageState extends State<ConfirmPage> {
         _serviceFee = doc['fee'] is String
             ? double.parse(doc['fee'])
             : doc['fee'].toDouble();
-        _calculateTotalFee(); // Calculate total fee after fetching service fee
       });
     }
   }
 
-  void _calculateTotalFee() {
-    final houseData = _houseData as Map<String, dynamic>;
+  void _calculateTotalFee(Map<String, dynamic> houseData) {
     // Ensure the agent fee is treated as a double
     final agentFee = houseData['agentfee'] is String
         ? double.parse(houseData['agentfee'])
@@ -671,6 +675,94 @@ class _ConfirmPageState extends State<ConfirmPage> {
 //                 ),
 //                 SizedBox(height: 16),
 //                 Divider(), // Divider below the fees section
+
+//                 // Pay with section
+//                 Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text(
+//                       'Pay with:',
+//                       style: TextStyle(
+//                         fontSize: 18,
+//                         fontWeight: FontWeight.bold,
+//                       ),
+//                     ),
+//                     SizedBox(height: 8),
+//                     // M-PESA Clickable Container
+//                     InkWell(
+//                       onTap: () {
+//                         // Handle M-PESA payment
+//                       },
+//                       child: Container(
+//                         padding:
+//                             EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+//                         decoration: BoxDecoration(
+//                           border: Border.all(color: Colors.grey),
+//                           borderRadius: BorderRadius.circular(8),
+//                         ),
+//                         child: Row(
+//                           children: [
+//                             Icon(Icons.phone_android,
+//                                 color: Colors.green), // M-PESA icon
+//                             SizedBox(width: 8),
+//                             Text(
+//                               'M-PESA',
+//                               style: TextStyle(fontSize: 16),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ),
+//                     SizedBox(height: 8),
+//                     // Credit or Debit Card Clickable Container
+//                     InkWell(
+//                       onTap: () {
+//                         // Handle Credit/Debit Card payment
+//                       },
+//                       child: Container(
+//                         padding:
+//                             EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+//                         decoration: BoxDecoration(
+//                           border: Border.all(color: Colors.grey),
+//                           borderRadius: BorderRadius.circular(8),
+//                         ),
+//                         child: Row(
+//                           children: [
+//                             Icon(Icons.credit_card,
+//                                 color: Colors.blue), // Credit Card icon
+//                             SizedBox(width: 8),
+//                             Text(
+//                               'Credit or Debit Card',
+//                               style: TextStyle(fontSize: 16),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//                 SizedBox(height: 16),
+//                 Divider(),
+
+//                 SizedBox(
+//                   width: 350,
+//                   child: ElevatedButton(
+//                     onPressed: () {},
+//                     style: ElevatedButton.styleFrom(
+//                       backgroundColor: Colors.blue,
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(12),
+//                       ),
+//                     ),
+//                     child: const Text(
+//                       'Confirm & Pay',
+//                       style: TextStyle(
+//                           color: Colors.white,
+//                           fontWeight: FontWeight.bold,
+//                           fontSize: 20.0),
+//                     ),
+//                   ),
+//                 ), // Divider below the Pay with section
 //               ],
 //             ),
 //           );
