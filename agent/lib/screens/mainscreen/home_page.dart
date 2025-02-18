@@ -22,10 +22,10 @@ class _NewHousesState extends State<NewHouses> {
   final ImagePicker _picker = ImagePicker();
   String? _selectedType;
   final List<String> _types = ['AirBNB', 'Rental', 'Sale'];
-  final TextEditingController _locationController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _bedroomsController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _agentfeeController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _bathroomController = TextEditingController();
   final TextEditingController _searchLocationController =
@@ -116,18 +116,6 @@ class _NewHousesState extends State<NewHouses> {
               ),
             ),
 
-            // Location Text Field
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: TextField(
-                controller: _locationController,
-                decoration: InputDecoration(
-                  labelText: 'Location',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-
             // Name Text Field
             Padding(
               padding: const EdgeInsets.all(10.0),
@@ -195,6 +183,18 @@ class _NewHousesState extends State<NewHouses> {
                 controller: _priceController,
                 decoration: InputDecoration(
                   labelText: 'Price',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextField(
+                controller: _agentfeeController,
+                decoration: InputDecoration(
+                  labelText: 'Agent Fee',
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
@@ -405,8 +405,7 @@ class _NewHousesState extends State<NewHouses> {
 
   void _uploadHouse() async {
     // Validate that all text fields are filled out
-    if (_locationController.text.isEmpty ||
-        _selectedType == null ||
+    if (_selectedType == null ||
         _bedroomsController.text.isEmpty ||
         _bathroomController.text.isEmpty ||
         _priceController.text.isEmpty ||
@@ -451,12 +450,12 @@ class _NewHousesState extends State<NewHouses> {
         'agentID': user.uid,
         'searchLocation':
             _searchLocationController.text, // Use the current user's UID
-        'location': _locationController.text,
         'name': _nameController.text,
         'type': _selectedType,
         'bedrooms': int.parse(_bedroomsController.text),
         'bathrooms': int.parse(_bathroomController.text),
         'price': double.parse(_priceController.text),
+        'agentfee': double.parse(_agentfeeController.text),
         'description': _descriptionController.text,
         'amenities': _amenities,
         'hasSwimmingPool': _hasSwimmingPool,
@@ -485,7 +484,6 @@ class _NewHousesState extends State<NewHouses> {
       // Refresh the page
       setState(() {
         _isUploading = false;
-        _locationController.clear();
         _selectedType = null;
         _bedroomsController.clear();
         _bathroomController.clear();
@@ -531,7 +529,6 @@ class _NewHousesState extends State<NewHouses> {
         await _places.getDetailsByPlaceId(prediction.placeId!);
     setState(() {
       _searchLocationController.text = prediction.description!;
-      _locationController.text = detail.result.formattedAddress!;
       _placePredictions.clear();
 
       // Convert the selected location to LatLng
