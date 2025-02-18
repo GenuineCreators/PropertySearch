@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:agent/screens/mainscreen/mains_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -25,6 +26,7 @@ class _SignupScreenState extends State<Registerationscreen> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   final ImagePicker _picker = ImagePicker();
 
   File? _profileImage;
@@ -99,6 +101,21 @@ class _SignupScreenState extends State<Registerationscreen> {
       if (user != null) {
         await user.sendEmailVerification();
 
+        String profileImageUrl = '';
+        if (_profileImage != null) {
+          final storageRef =
+              _storage.ref().child('agentprofile_images/${user.uid}.jpg');
+          await storageRef.putFile(_profileImage!);
+          profileImageUrl = await storageRef.getDownloadURL();
+        }
+
+        String idImageUrl = '';
+        if (_idImage != null) {
+          final storageRef = _storage.ref().child('id_images/${user.uid}.jpg');
+          await storageRef.putFile(_idImage!);
+          idImageUrl = await storageRef.getDownloadURL();
+        }
+
         await _firestore.collection('Agents').doc(user.uid).set({
           'username': _userNameController.text.trim(),
           'firstName': _firstNameController.text.trim(),
@@ -106,8 +123,8 @@ class _SignupScreenState extends State<Registerationscreen> {
           'email': email,
           'phone': phone,
           'idNumber': _idNumberController.text.trim(),
-          'profileImage': _profileImage != null ? _profileImage!.path : '',
-          'idImage': _idImage != null ? _idImage!.path : '',
+          'profileImage': profileImageUrl,
+          'idImage': idImageUrl,
         });
 
         Fluttertoast.showToast(
@@ -115,10 +132,8 @@ class _SignupScreenState extends State<Registerationscreen> {
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM);
 
-        // Dismiss progress indicator before navigating
         Navigator.of(context).pop();
 
-        // Navigate to NewCompanyScreen
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MainScreen()),
@@ -130,8 +145,7 @@ class _SignupScreenState extends State<Registerationscreen> {
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM);
     } finally {
-      Navigator.of(context)
-          .pop(); // Remove CircularProgressIndicator if error occurs
+      Navigator.of(context).pop();
     }
   }
 
@@ -333,30 +347,54 @@ class _SignupScreenState extends State<Registerationscreen> {
   }
 }
 
-// import 'dart:io';
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import 'dart:io';
+// import 'package:agent/screens/mainscreen/mains_screen.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:flutter/material.dart';
 // import 'package:image_picker/image_picker.dart';
-
+// import 'package:fluttertoast/fluttertoast.dart';
 // import 'loginScreen.dart';
 
 // class Registerationscreen extends StatefulWidget {
-//   const Registerationscreen({Key? key}) : super(key: key);
+//   const Registerationscreen({super.key});
 
 //   @override
 //   State<Registerationscreen> createState() => _SignupScreenState();
 // }
 
 // class _SignupScreenState extends State<Registerationscreen> {
-//   TextEditingController _userNameController = TextEditingController();
-//   TextEditingController _emailController = TextEditingController();
-//   TextEditingController _phoneController = TextEditingController();
-//   TextEditingController _passwordController = TextEditingController();
-//   TextEditingController _idNumberController = TextEditingController();
+//   final TextEditingController _userNameController = TextEditingController();
+//   final TextEditingController _firstNameController = TextEditingController();
+//   final TextEditingController _lastNameController = TextEditingController();
+//   final TextEditingController _emailController = TextEditingController();
+//   final TextEditingController _phoneController = TextEditingController();
+//   final TextEditingController _passwordController = TextEditingController();
+//   final TextEditingController _idNumberController = TextEditingController();
 
-//   // ignore: unused_fieldap, unused_field
 //   final FirebaseAuth _auth = FirebaseAuth.instance;
+//   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 //   final ImagePicker _picker = ImagePicker();
 
 //   File? _profileImage;
@@ -385,13 +423,13 @@ class _SignupScreenState extends State<Registerationscreen> {
 //           child: Wrap(
 //             children: [
 //               ListTile(
-//                 leading: Icon(Icons.camera_alt),
-//                 title: Text('Camera'),
+//                 leading: const Icon(Icons.camera_alt),
+//                 title: const Text('Camera'),
 //                 onTap: () => _pickImage(ImageSource.camera, isProfileImage),
 //               ),
 //               ListTile(
-//                 leading: Icon(Icons.photo_library),
-//                 title: Text('Gallery'),
+//                 leading: const Icon(Icons.photo_library),
+//                 title: const Text('Gallery'),
 //                 onTap: () => _pickImage(ImageSource.gallery, isProfileImage),
 //               ),
 //             ],
@@ -399,6 +437,80 @@ class _SignupScreenState extends State<Registerationscreen> {
 //         );
 //       },
 //     );
+//   }
+
+//   Future<void> _registerUser() async {
+//     String email = _emailController.text.trim();
+//     String phone = _phoneController.text.trim();
+
+//     if (!_isValidEmail(email) || !_isValidPhone(phone)) {
+//       Fluttertoast.showToast(
+//           msg: "Input valid email or Phone No",
+//           toastLength: Toast.LENGTH_SHORT,
+//           gravity: ToastGravity.BOTTOM);
+//       return;
+//     }
+
+//     showDialog(
+//       context: context,
+//       barrierDismissible: false,
+//       builder: (context) => const Center(child: CircularProgressIndicator()),
+//     );
+
+//     try {
+//       UserCredential userCredential =
+//           await _auth.createUserWithEmailAndPassword(
+//         email: email,
+//         password: _passwordController.text.trim(),
+//       );
+
+//       User? user = userCredential.user;
+
+//       if (user != null) {
+//         await user.sendEmailVerification();
+
+//         await _firestore.collection('Agents').doc(user.uid).set({
+//           'username': _userNameController.text.trim(),
+//           'firstName': _firstNameController.text.trim(),
+//           'lastName': _lastNameController.text.trim(),
+//           'email': email,
+//           'phone': phone,
+//           'idNumber': _idNumberController.text.trim(),
+//           'profileImage': _profileImage != null ? _profileImage!.path : '',
+//           'idImage': _idImage != null ? _idImage!.path : '',
+//         });
+
+//         Fluttertoast.showToast(
+//             msg: "Registered Successfully",
+//             toastLength: Toast.LENGTH_SHORT,
+//             gravity: ToastGravity.BOTTOM);
+
+//         // Dismiss progress indicator before navigating
+//         Navigator.of(context).pop();
+
+//         // Navigate to NewCompanyScreen
+//         Navigator.pushReplacement(
+//           context,
+//           MaterialPageRoute(builder: (context) => const MainScreen()),
+//         );
+//       }
+//     } catch (e) {
+//       Fluttertoast.showToast(
+//           msg: e.toString(),
+//           toastLength: Toast.LENGTH_LONG,
+//           gravity: ToastGravity.BOTTOM);
+//     } finally {
+//       Navigator.of(context)
+//           .pop(); // Remove CircularProgressIndicator if error occurs
+//     }
+//   }
+
+//   bool _isValidEmail(String email) {
+//     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+//   }
+
+//   bool _isValidPhone(String phone) {
+//     return RegExp(r'^\d{10}$').hasMatch(phone);
 //   }
 
 //   @override
@@ -412,7 +524,7 @@ class _SignupScreenState extends State<Registerationscreen> {
 //               crossAxisAlignment: CrossAxisAlignment.start,
 //               children: [
 //                 const SizedBox(height: 30),
-//                 Center(
+//                 const Center(
 //                   child: Text(
 //                     'Create an Account',
 //                     style: TextStyle(
@@ -430,9 +542,9 @@ class _SignupScreenState extends State<Registerationscreen> {
 //                               radius: 50,
 //                               backgroundImage: FileImage(_profileImage!),
 //                             )
-//                           : CircleAvatar(
+//                           : const CircleAvatar(
 //                               radius: 50,
-//                               backgroundImage: const NetworkImage(
+//                               backgroundImage: NetworkImage(
 //                                   'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg'),
 //                             ),
 //                       Positioned(
@@ -457,23 +569,23 @@ class _SignupScreenState extends State<Registerationscreen> {
 //                 const SizedBox(height: 10),
 //                 TextField(
 //                   controller: _userNameController,
-//                   decoration: InputDecoration(
+//                   decoration: const InputDecoration(
 //                     labelText: 'User Name',
 //                     border: OutlineInputBorder(),
 //                   ),
 //                 ),
 //                 const SizedBox(height: 10),
 //                 TextField(
-//                   controller: _userNameController,
-//                   decoration: InputDecoration(
+//                   controller: _firstNameController,
+//                   decoration: const InputDecoration(
 //                     labelText: 'First Name',
 //                     border: OutlineInputBorder(),
 //                   ),
 //                 ),
 //                 const SizedBox(height: 10),
 //                 TextField(
-//                   controller: _userNameController,
-//                   decoration: InputDecoration(
+//                   controller: _lastNameController,
+//                   decoration: const InputDecoration(
 //                     labelText: 'Second Name',
 //                     border: OutlineInputBorder(),
 //                   ),
@@ -481,7 +593,7 @@ class _SignupScreenState extends State<Registerationscreen> {
 //                 const SizedBox(height: 10),
 //                 TextField(
 //                   controller: _emailController,
-//                   decoration: InputDecoration(
+//                   decoration: const InputDecoration(
 //                     labelText: 'Email',
 //                     border: OutlineInputBorder(),
 //                   ),
@@ -490,7 +602,7 @@ class _SignupScreenState extends State<Registerationscreen> {
 //                 const SizedBox(height: 10),
 //                 TextField(
 //                   controller: _phoneController,
-//                   decoration: InputDecoration(
+//                   decoration: const InputDecoration(
 //                     labelText: 'Phone No',
 //                     border: OutlineInputBorder(),
 //                   ),
@@ -499,7 +611,7 @@ class _SignupScreenState extends State<Registerationscreen> {
 //                 const SizedBox(height: 10),
 //                 TextField(
 //                   controller: _passwordController,
-//                   decoration: InputDecoration(
+//                   decoration: const InputDecoration(
 //                     labelText: 'Password',
 //                     border: OutlineInputBorder(),
 //                   ),
@@ -508,7 +620,7 @@ class _SignupScreenState extends State<Registerationscreen> {
 //                 const SizedBox(height: 10),
 //                 TextField(
 //                   controller: _idNumberController,
-//                   decoration: InputDecoration(
+//                   decoration: const InputDecoration(
 //                     labelText: 'ID Number',
 //                     border: OutlineInputBorder(),
 //                   ),
@@ -544,19 +656,19 @@ class _SignupScreenState extends State<Registerationscreen> {
 //                 SizedBox(
 //                   width: 350,
 //                   child: ElevatedButton(
-//                     onPressed: () {}, // signUpWithEmail,
-//                     child: Text(
-//                       'Sign Up',
-//                       style: TextStyle(
-//                           color: Colors.white,
-//                           fontWeight: FontWeight.bold,
-//                           fontSize: 20.0),
-//                     ),
+//                     onPressed: _registerUser,
 //                     style: ElevatedButton.styleFrom(
 //                       backgroundColor: Colors.blue,
 //                       shape: RoundedRectangleBorder(
 //                         borderRadius: BorderRadius.circular(12),
 //                       ),
+//                     ),
+//                     child: const Text(
+//                       'Sign Up',
+//                       style: TextStyle(
+//                           color: Colors.white,
+//                           fontWeight: FontWeight.bold,
+//                           fontSize: 20.0),
 //                     ),
 //                   ),
 //                 ),
@@ -569,18 +681,16 @@ class _SignupScreenState extends State<Registerationscreen> {
 //                         Navigator.push(
 //                           context,
 //                           MaterialPageRoute(
-//                             builder: (context) => LoginScreen(),
+//                             builder: (context) => const LoginScreen(),
 //                           ),
 //                         );
 //                       },
-//                       child: const Text('Sign In'),
-//                     ),
-//                     const SizedBox(width: 20),
-//                     TextButton(
-//                       onPressed: () {
-//                         // Add logic for forgot password
-//                       },
-//                       child: const Text('Forgot Password?'),
+//                       child: const Text(
+//                         'Already have an account? Login here',
+//                         style: TextStyle(
+//                             color: Colors.blueAccent,
+//                             fontWeight: FontWeight.bold),
+//                       ),
 //                     ),
 //                   ],
 //                 ),
